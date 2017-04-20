@@ -14,10 +14,10 @@ type ExampleTargetConf struct {
 	Password     string
 }
 
-// Create a new ExamplelientConf from file. Other fields have default values and can be overrided.
+// Create a new ExampleClientConf from file. Other fields have default values and can be overridden.
 func NewExampleTargetConf(targetConfigFilePath string) (*ExampleTargetConf, error) {
 
-	fmt.Printf("[ExampleTargetConf] Read configration from %s", targetConfigFilePath)
+	fmt.Printf("[ExampleTargetConf] Read configuration from %s\n", targetConfigFilePath)
 	metaConfig := readConfig(targetConfigFilePath)
 
 	return metaConfig, nil
@@ -27,10 +27,10 @@ func NewExampleTargetConf(targetConfigFilePath string) (*ExampleTargetConf, erro
 func readConfig(path string) *ExampleTargetConf {
 	file, e := ioutil.ReadFile(path)
 	if e != nil {
-		fmt.Errorf("File error: %v\n", e)
+		fmt.Printf("File error: %v\n", e)
 		os.Exit(1)
 	}
-	fmt.Print(string(file))
+	fmt.Println(string(file))
 
 	var config ExampleTargetConf
 	err := json.Unmarshal(file, &config)

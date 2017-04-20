@@ -23,19 +23,22 @@ type ExampleDiscoveryClient struct {
 	topoSource 	*TopologyGenerator
 }
 
-func NewDiscoveryClient(targetIdentifier string, confFile string) *ExampleDiscoveryClient {
+func NewDiscoveryClient(targetIdentifier string, confFile string) (*ExampleDiscoveryClient, error) {
 	// Parse conf file to create clientConf
 	clientConf, _ := conf.NewExampleTargetConf(confFile)
-	fmt.Printf("[ExampleDiscoveryClient] Target Conf ", clientConf)
-	// TODO: handle error
-	topologyAccessor, _ := NewTopologyGenerator(2, 3)	// TODO:
+	fmt.Printf("[ExampleDiscoveryClient] Target Conf %v\n", clientConf)
+	topologyAccessor, err := NewTopologyGenerator(2, 3)
+	if (err != nil) {
+		fmt.Errorf("Error when instantiating a topology generator", err)
+		return nil, err
+	}
 	client := &ExampleDiscoveryClient{
 		targetIdentifier: targetIdentifier,
 		clientConf: clientConf,
 		topoSource: topologyAccessor,
 	}
 
-	return client
+	return client, nil
 }
 
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	// Turbo sdk imports
 	"github.com/turbonomic/turbo-go-sdk/pkg/probe"
@@ -12,22 +13,27 @@ import (
 )
 
 func main() {
-	targetConf 	:= "src/github.com/turbonomic/example-turbo/cmd/tap/target-conf.json"
+	targetConf 	:= "target-conf.json"
 	targetType 	:= "ExampleGoProbe"
 	probeCategory 	:= "CloudNative"
 
-	turboCommConf 	:= "src/github.com/turbonomic/example-turbo/cmd/tap/container-conf.json"
+	turboCommConf 	:= "turbo-server-conf.json"
 	target1 	:= "Test1"
 
 	communicator, err := service.ParseTurboCommunicationConfig(turboCommConf)
 	if err != nil {
-		fmt.Errorf("Error when trying to parse the turbo communicator config file %v: %v", turboCommConf, err)
+		fmt.Printf("Error while parsing the turbo communicator config file %v: %v\n", turboCommConf, err)
+		os.Exit(1)
 	}
 
 	// Example Probe Registration Client
 	registrationClient := &example.ExampleRegistrationClient{}
 	// Example Probe Registration Client
-	discoveryClient := example.NewDiscoveryClient(target1, targetConf)
+	discoveryClient, err := example.NewDiscoveryClient(target1, targetConf)
+	if err != nil {
+		fmt.Printf("Error while instantiating a discovery client at %v with config %v: %v\n", turboCommConf, targetConf, err)
+		os.Exit(1)
+	}
 
 	tapService, err := service.NewTAPServiceBuilder().
 		WithTurboCommunicator(communicator).
@@ -36,7 +42,8 @@ func main() {
 		DiscoversTarget(target1, discoveryClient)).Create()
 
 	if err != nil {
-		fmt.Errorf("Error when trying to build turbo tap service on target %v: %v", target1, err)
+		fmt.Printf("Error while building turbo tap service on target %v: %v\n", target1, err)
+		os.Exit(1)
 	}
 
 	// Connect to the Turbo server
