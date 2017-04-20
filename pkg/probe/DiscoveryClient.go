@@ -9,7 +9,7 @@ import (
 	"github.com/turbonomic/turbo-go-sdk/pkg/builder"
 
 	// Example probe
-	"github.com/chlam4/example-goprobe/pkg/conf"
+	"github.com/chlam4/turbo-goprobe-example/pkg/conf"
 )
 
 
@@ -26,7 +26,7 @@ type ExampleDiscoveryClient struct {
 func NewDiscoveryClient(targetIdentifier string, confFile string) *ExampleDiscoveryClient {
 	// Parse conf file to create clientConf
 	clientConf, _ := conf.NewExampleTargetConf(confFile)
-	fmt.Println("[ExampleDiscoveryClient] Target Conf ", clientConf)
+	fmt.Printf("[ExampleDiscoveryClient] Target Conf ", clientConf)
 	// TODO: handle error
 	topologyAccessor, _ := NewTopologyGenerator(2, 3)	// TODO:
 	client := &ExampleDiscoveryClient{

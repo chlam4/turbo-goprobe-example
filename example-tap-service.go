@@ -1,26 +1,17 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 
 	// Turbo sdk imports
 	"github.com/turbonomic/turbo-go-sdk/pkg/probe"
 	"github.com/turbonomic/turbo-go-sdk/pkg/service"
 
 	// Example probe
-	example "github.com/chlam4/example-goprobe/pkg/probe"
-
-	"github.com/golang/glog"
+	example "github.com/chlam4/turbo-goprobe-example/pkg/probe"
 )
 
-func init() {
-}
-
 func main() {
-	flag.Parse()
-	//switch {
-	//case 1 : glog.V(3).Infof("Test")
-	//}
 	targetConf 	:= "src/github.com/turbonomic/example-turbo/cmd/tap/target-conf.json"
 	targetType 	:= "ExampleGoProbe"
 	probeCategory 	:= "CloudNative"
@@ -28,10 +19,9 @@ func main() {
 	turboCommConf 	:= "src/github.com/turbonomic/example-turbo/cmd/tap/container-conf.json"
 	target1 	:= "Test1"
 
-	//
 	communicator, err := service.ParseTurboCommunicationConfig(turboCommConf)
 	if err != nil {
-		glog.Errorf("Error when trying to parse the turbo communicator config file %v: %v", turboCommConf, err)
+		fmt.Errorf("Error when trying to parse the turbo communicator config file %v: %v", turboCommConf, err)
 	}
 
 	// Example Probe Registration Client
@@ -46,7 +36,7 @@ func main() {
 		DiscoversTarget(target1, discoveryClient)).Create()
 
 	if err != nil {
-		glog.Errorf("Error when trying to build turbo tap service on target %v: %v", target1, err)
+		fmt.Errorf("Error when trying to build turbo tap service on target %v: %v", target1, err)
 	}
 
 	// Connect to the Turbo server

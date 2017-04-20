@@ -4,8 +4,8 @@ import  (
 	"fmt"
 
 	// Turbo sdk imports
-	proto "github.com/turbonomic/turbo-go-sdk/pkg/proto"
-	builder "github.com/turbonomic/turbo-go-sdk/pkg/builder"
+	"github.com/turbonomic/turbo-go-sdk/pkg/proto"
+	"github.com/turbonomic/turbo-go-sdk/pkg/builder"
 )
 
 // Registration Client for the Example Probe
