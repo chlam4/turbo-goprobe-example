@@ -4,75 +4,70 @@ import (
 	"fmt"
 
 	// Turbo sdk imports
-	"github.com/turbonomic/turbo-go-sdk/pkg/proto"
-	"github.com/turbonomic/turbo-go-sdk/pkg/probe"
 	"github.com/turbonomic/turbo-go-sdk/pkg/builder"
+	"github.com/turbonomic/turbo-go-sdk/pkg/probe"
+	"github.com/turbonomic/turbo-go-sdk/pkg/proto"
 
 	// Example probe
 	"github.com/chlam4/turbo-goprobe-example/pkg/conf"
 )
 
-
 // Discovery Client for the Example Probe
 // Implements the TurboDiscoveryClient interface
 type ExampleDiscoveryClient struct {
-	clientConf        *conf.ExampleTargetConf
-	targetIdentifier  string
-	username          string
-	pwd               string
-	topoSource 	*TopologyGenerator
+	ClientConf *conf.ExampleTargetConf
+	topoSource *TopologyGenerator
 }
 
-func NewDiscoveryClient(targetIdentifier string, confFile string) (*ExampleDiscoveryClient, error) {
+func NewDiscoveryClient(confFile string) (*ExampleDiscoveryClient, error) {
 	// Parse conf file to create clientConf
 	clientConf, _ := conf.NewExampleTargetConf(confFile)
 	fmt.Printf("[ExampleDiscoveryClient] Target Conf %v\n", clientConf)
 	topologyAccessor, err := NewTopologyGenerator(2, 3)
-	if (err != nil) {
+	if err != nil {
 		fmt.Errorf("Error when instantiating a topology generator", err)
 		return nil, err
 	}
 	client := &ExampleDiscoveryClient{
-		targetIdentifier: targetIdentifier,
-		clientConf: clientConf,
+		ClientConf: clientConf,
 		topoSource: topologyAccessor,
 	}
 
 	return client, nil
 }
 
-
 // Get the Account Values to create VMTTarget in the turbo server corresponding to this client
 func (handler *ExampleDiscoveryClient) GetAccountValues() *probe.TurboTargetInfo {
 	var accountValues []*proto.AccountValue
 	// Convert all parameters in clientConf to AccountValue list
-	prop := "Address"
+	clientConf := handler.ClientConf
+	targetId := TargetIdField
 	accVal := &proto.AccountValue{
-		Key: &prop,
-		StringValue: &handler.clientConf.Address,
+		Key:         &targetId,
+		StringValue: &clientConf.Address,
 	}
 	accountValues = append(accountValues, accVal)
 
-	prop = "Username"
+	username := Username
 	accVal = &proto.AccountValue{
-		Key: &prop,
-		StringValue: &handler.clientConf.Username,
+		Key:         &username,
+		StringValue: &clientConf.Username,
 	}
 	accountValues = append(accountValues, accVal)
 
-	prop = "Password"
+	password := Password
 	accVal = &proto.AccountValue{
-		Key: &prop,
-		StringValue: &handler.clientConf.Password,
+		Key:         &password,
+		StringValue: &clientConf.Password,
 	}
 	accountValues = append(accountValues, accVal)
 
-	targetInfo := probe.NewTurboTargetInfoBuilder("example", "example", "id", accountValues).Create()
+	targetInfo := probe.NewTurboTargetInfoBuilder(clientConf.TargetType, clientConf.ProbeCategory, TargetIdField, accountValues).Create()
 	return targetInfo
 }
 
 // Validate the Target
-func (handler *ExampleDiscoveryClient) Validate(accountValues[] *proto.AccountValue) (*proto.ValidationResponse, error) {
+func (handler *ExampleDiscoveryClient) Validate(accountValues []*proto.AccountValue) (*proto.ValidationResponse, error) {
 	fmt.Printf("[ExampleDiscoveryClient] BEGIN Validation for ExampleDiscoveryClient  %s", accountValues)
 	// TODO: connect to the client and get validation response
 	validationResponse := &proto.ValidationResponse{}
@@ -82,7 +77,7 @@ func (handler *ExampleDiscoveryClient) Validate(accountValues[] *proto.AccountVa
 }
 
 // Discover the Target Topology
-func (handler *ExampleDiscoveryClient) Discover(accountValues[] *proto.AccountValue) (*proto.DiscoveryResponse, error) {
+func (handler *ExampleDiscoveryClient) Discover(accountValues []*proto.AccountValue) (*proto.DiscoveryResponse, error) {
 	fmt.Printf("[ExampleProbe] ========= Discovery for ExampleProbe ============= %s", accountValues)
 	discoveryResults, err := handler.Discover_Old()
 	// 4. Build discovery response.
@@ -108,7 +103,6 @@ func (handler *ExampleDiscoveryClient) Discover(accountValues[] *proto.AccountVa
 	fmt.Printf("[ExampleProbe] discovery response %s\n", discoveryResponse)
 	return discoveryResponse, nil
 }
-
 
 // ======================================================================
 func (this *ExampleDiscoveryClient) Discover_Old() ([]*proto.EntityDTO, error) {

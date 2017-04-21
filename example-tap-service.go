@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
@@ -13,12 +14,10 @@ import (
 )
 
 func main() {
-	targetConf 	:= "target-conf.json"
-	targetType 	:= "ExampleGoProbe"
-	probeCategory 	:= "CloudNative"
+	flag.Parse()
 
-	turboCommConf 	:= "turbo-server-conf.json"
-	target1 	:= "Test1"
+	targetConf := "target-conf.json"
+	turboCommConf := "turbo-server-conf.json"
 
 	communicator, err := service.ParseTurboCommunicationConfig(turboCommConf)
 	if err != nil {
@@ -29,7 +28,7 @@ func main() {
 	// Example Probe Registration Client
 	registrationClient := &example.ExampleRegistrationClient{}
 	// Example Probe Registration Client
-	discoveryClient, err := example.NewDiscoveryClient(target1, targetConf)
+	discoveryClient, err := example.NewDiscoveryClient(targetConf)
 	if err != nil {
 		fmt.Printf("Error while instantiating a discovery client at %v with config %v: %v\n", turboCommConf, targetConf, err)
 		os.Exit(1)
@@ -37,12 +36,12 @@ func main() {
 
 	tapService, err := service.NewTAPServiceBuilder().
 		WithTurboCommunicator(communicator).
-		WithTurboProbe(probe.NewProbeBuilder(targetType, probeCategory).
-		RegisteredBy(registrationClient).
-		DiscoversTarget(target1, discoveryClient)).Create()
+		WithTurboProbe(probe.NewProbeBuilder(discoveryClient.ClientConf.TargetType, discoveryClient.ClientConf.ProbeCategory).
+			RegisteredBy(registrationClient).
+			DiscoversTarget(discoveryClient.ClientConf.Address, discoveryClient)).Create()
 
 	if err != nil {
-		fmt.Printf("Error while building turbo tap service on target %v: %v\n", target1, err)
+		fmt.Printf("Error while building turbo tap service on target %v: %v\n", discoveryClient.ClientConf.Address, err)
 		os.Exit(1)
 	}
 

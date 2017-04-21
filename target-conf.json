@@ -1,5 +1,7 @@
 {
-  "Address": "Test1",
-  "Username": "Test1",
-  "Password": "Test1"
+  "probeCategory":"ExampleGoProbe",
+  "targetType":"Example",
+  "address":"http://127.0.0.1",
+  "username":"user",
+  "password":"password"
 }

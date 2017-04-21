@@ -1,17 +1,19 @@
 package conf
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"encoding/json"
 )
 
 // Configuration Parameters to connect to an example Target
 type ExampleTargetConf struct {
-	Address      string
-	Username     string
-	Password     string
+	Address       string
+	Username      string
+	Password      string
+	ProbeCategory string
+	TargetType    string
 }
 
 // Create a new ExampleClientConf from file. Other fields have default values and can be overridden.

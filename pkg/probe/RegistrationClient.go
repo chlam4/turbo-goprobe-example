@@ -1,17 +1,22 @@
 package probe
 
-import  (
+import (
 	"fmt"
 
 	// Turbo sdk imports
-	"github.com/turbonomic/turbo-go-sdk/pkg/proto"
 	"github.com/turbonomic/turbo-go-sdk/pkg/builder"
+	"github.com/turbonomic/turbo-go-sdk/pkg/proto"
+)
+
+const (
+	TargetIdField string = "targetIdentifier"
+	Username      string = "username"
+	Password      string = "password"
 )
 
 // Registration Client for the Example Probe
 // Implements the TurboRegistrationClient interface
 type ExampleRegistrationClient struct {
-
 }
 
 func (myProbe *ExampleRegistrationClient) GetSupplyChainDefinition() []*proto.TemplateDTO {
@@ -29,27 +34,27 @@ func (myProbe *ExampleRegistrationClient) GetSupplyChainDefinition() []*proto.Te
 }
 
 func (registrationClient *ExampleRegistrationClient) GetIdentifyingFields() string {
-	return "targetIdentifier"
+	return TargetIdField
 }
 
 func (myProbe *ExampleRegistrationClient) GetAccountDefinition() []*proto.AccountDefEntry {
 	var acctDefProps []*proto.AccountDefEntry
 
 	// target id
-	targetIDAcctDefEntry := builder.NewAccountDefEntryBuilder("targetIdentifier", "Address",
+	targetIDAcctDefEntry := builder.NewAccountDefEntryBuilder(TargetIdField, "Address",
 		"IP address of the probe", ".*",
 		true, false).Create()
 
 	acctDefProps = append(acctDefProps, targetIDAcctDefEntry)
 
 	// username
-	usernameAcctDefEntry := builder.NewAccountDefEntryBuilder("username", "Username",
+	usernameAcctDefEntry := builder.NewAccountDefEntryBuilder(Username, "Username",
 		"Username of the probe", ".*",
 		true, false).Create()
 	acctDefProps = append(acctDefProps, usernameAcctDefEntry)
 
 	// password
-	passwdAcctDefEntry := builder.NewAccountDefEntryBuilder("password", "Password",
+	passwdAcctDefEntry := builder.NewAccountDefEntryBuilder(Password, "Password",
 		"Password of the probe", ".*",
 		true, true).Create()
 	acctDefProps = append(acctDefProps, passwdAcctDefEntry)
