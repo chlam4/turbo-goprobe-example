@@ -62,7 +62,7 @@ func (handler *ExampleDiscoveryClient) GetAccountValues() *probe.TurboTargetInfo
 	}
 	accountValues = append(accountValues, accVal)
 
-	targetInfo := probe.NewTurboTargetInfoBuilder(clientConf.TargetType, clientConf.ProbeCategory, TargetIdField, accountValues).Create()
+	targetInfo := probe.NewTurboTargetInfoBuilder(clientConf.ProbeCategory, clientConf.TargetType, TargetIdField, accountValues).Create()
 	return targetInfo
 }
 
