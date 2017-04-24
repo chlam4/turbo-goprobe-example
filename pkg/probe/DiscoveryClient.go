@@ -38,29 +38,32 @@ func NewDiscoveryClient(confFile string) (*ExampleDiscoveryClient, error) {
 
 // Get the Account Values to create VMTTarget in the turbo server corresponding to this client
 func (handler *ExampleDiscoveryClient) GetAccountValues() *probe.TurboTargetInfo {
-	var accountValues []*proto.AccountValue
 	// Convert all parameters in clientConf to AccountValue list
 	clientConf := handler.ClientConf
+
 	targetId := TargetIdField
-	accVal := &proto.AccountValue{
+	targetIdVal := &proto.AccountValue{
 		Key:         &targetId,
 		StringValue: &clientConf.Address,
 	}
-	accountValues = append(accountValues, accVal)
 
 	username := Username
-	accVal = &proto.AccountValue{
+	usernameVal := &proto.AccountValue{
 		Key:         &username,
 		StringValue: &clientConf.Username,
 	}
-	accountValues = append(accountValues, accVal)
 
 	password := Password
-	accVal = &proto.AccountValue{
+	passwordVal := &proto.AccountValue{
 		Key:         &password,
 		StringValue: &clientConf.Password,
 	}
-	accountValues = append(accountValues, accVal)
+
+	accountValues := []*proto.AccountValue{
+		targetIdVal,
+		usernameVal,
+		passwordVal,
+	}
 
 	targetInfo := probe.NewTurboTargetInfoBuilder(clientConf.ProbeCategory, clientConf.TargetType, TargetIdField, accountValues).Create()
 	return targetInfo
@@ -85,10 +88,10 @@ func (handler *ExampleDiscoveryClient) Discover(accountValues []*proto.AccountVa
 	var discoveryResponse *proto.DiscoveryResponse
 	if err != nil {
 		// If there is error during discovery, return an ErrorDTO.
-		serverity := proto.ErrorDTO_CRITICAL
+		severity := proto.ErrorDTO_CRITICAL
 		description := fmt.Sprintf("%v", err)
 		errorDTO := &proto.ErrorDTO{
-			Severity:    &serverity,
+			Severity:    &severity,
 			Description: &description,
 		}
 		discoveryResponse = &proto.DiscoveryResponse{
@@ -106,21 +109,18 @@ func (handler *ExampleDiscoveryClient) Discover(accountValues []*proto.AccountVa
 
 // ======================================================================
 func (this *ExampleDiscoveryClient) Discover_Old() ([]*proto.EntityDTO, error) {
-	var discoveryResults []*proto.EntityDTO
 
 	pmDTOs, err := this.discoverPMs()
 	if err != nil {
 		return nil, fmt.Errorf("Error found during PM discovery: %s", err)
 	}
-	discoveryResults = append(discoveryResults, pmDTOs...)
 
 	vmDTOs, err := this.discoverVMs()
 	if err != nil {
 		return nil, fmt.Errorf("Error found during VM discovery: %s", err)
 	}
-	discoveryResults = append(discoveryResults, vmDTOs...)
 
-	return discoveryResults, nil
+	return append(pmDTOs, vmDTOs...), nil
 }
 
 func (this *ExampleDiscoveryClient) discoverPMs() ([]*proto.EntityDTO, error) {
@@ -144,22 +144,18 @@ func (this *ExampleDiscoveryClient) discoverPMs() ([]*proto.EntityDTO, error) {
 }
 
 func createPMCommoditiesSold(pm *PhysicalMachine) []*proto.CommodityDTO {
-	var commoditiesSold []*proto.CommodityDTO
-	pmResourceStat := pm.ResourceStat
 
 	cpuComm, _ := builder.NewCommodityDTOBuilder(proto.CommodityDTO_CPU).
-		Capacity(pmResourceStat.cpuCapacity).
-		Used(pmResourceStat.cpuUsed).
+		Capacity(pm.ResourceStat.cpuCapacity).
+		Used(pm.ResourceStat.cpuUsed).
 		Create()
-	commoditiesSold = append(commoditiesSold, cpuComm)
 
 	memComm, _ := builder.NewCommodityDTOBuilder(proto.CommodityDTO_MEM).
-		Capacity(pmResourceStat.memCapacity).
-		Used(pmResourceStat.memUsed).
+		Capacity(pm.ResourceStat.memCapacity).
+		Used(pm.ResourceStat.memUsed).
 		Create()
-	commoditiesSold = append(commoditiesSold, memComm)
 
-	return commoditiesSold
+	return []*proto.CommodityDTO{cpuComm, memComm}
 }
 
 func (this *ExampleDiscoveryClient) discoverVMs() ([]*proto.EntityDTO, error) {
@@ -186,35 +182,28 @@ func (this *ExampleDiscoveryClient) discoverVMs() ([]*proto.EntityDTO, error) {
 }
 
 func createVMCommoditiesSold(vm *VirtualMachine) []*proto.CommodityDTO {
-	var commoditiesSold []*proto.CommodityDTO
-	vmResourceStat := vm.ResourceStat
 
 	vCpuComm, _ := builder.NewCommodityDTOBuilder(proto.CommodityDTO_VCPU).
-		Capacity(vmResourceStat.vCpuCapacity).
-		Used(vmResourceStat.vCpuUsed).
+		Capacity(vm.ResourceStat.vCpuCapacity).
+		Used(vm.ResourceStat.vCpuUsed).
 		Create()
-	commoditiesSold = append(commoditiesSold, vCpuComm)
 
 	vMemComm, _ := builder.NewCommodityDTOBuilder(proto.CommodityDTO_VMEM).
-		Capacity(vmResourceStat.vMemCapacity).
-		Used(vmResourceStat.vMemUsed).
+		Capacity(vm.ResourceStat.vMemCapacity).
+		Used(vm.ResourceStat.vMemUsed).
 		Create()
-	commoditiesSold = append(commoditiesSold, vMemComm)
 
-	return commoditiesSold
+	return []*proto.CommodityDTO{vCpuComm, vMemComm}
 }
 
 func createVMCommoditiesBought(vm *VirtualMachine) []*proto.CommodityDTO {
-	var commoditiesBought []*proto.CommodityDTO
 	vCpuCommBought, _ := builder.NewCommodityDTOBuilder(proto.CommodityDTO_CPU).
 		Used(vm.ResourceStat.vCpuUsed).
 		Create()
-	commoditiesBought = append(commoditiesBought, vCpuCommBought)
 
 	vMemCommBought, _ := builder.NewCommodityDTOBuilder(proto.CommodityDTO_MEM).
 		Used(vm.ResourceStat.vMemCapacity).
 		Create()
-	commoditiesBought = append(commoditiesBought, vMemCommBought)
 
-	return commoditiesBought
+	return []*proto.CommodityDTO{vCpuCommBought, vMemCommBought}
 }

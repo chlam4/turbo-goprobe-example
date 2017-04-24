@@ -1,15 +1,15 @@
 package probe
 
 import (
-	builder "github.com/turbonomic/turbo-go-sdk/pkg/supplychain"
 	"github.com/turbonomic/turbo-go-sdk/pkg/proto"
+	builder "github.com/turbonomic/turbo-go-sdk/pkg/supplychain"
 )
 
 var (
-	cpuType  proto.CommodityDTO_CommodityType = proto.CommodityDTO_CPU
-	memType  proto.CommodityDTO_CommodityType = proto.CommodityDTO_MEM
-	vCpuType proto.CommodityDTO_CommodityType = proto.CommodityDTO_VCPU
-	vMemType proto.CommodityDTO_CommodityType = proto.CommodityDTO_VMEM
+	cpuType  = proto.CommodityDTO_CPU
+	memType  = proto.CommodityDTO_MEM
+	vCpuType = proto.CommodityDTO_VCPU
+	vMemType = proto.CommodityDTO_VMEM
 
 	//Commodity key is optional, when key is set, it serves as a constraint between seller and buyer
 	//for example, the buyer can only go to a seller that sells the commodity with the required key
@@ -70,11 +70,11 @@ func (this *SupplyChainFactory) physicalMachineSupplyChainNodeBuilder() *builder
 func (this *SupplyChainFactory) virtualMachineSupplyChainNodeBuilder() *builder.SupplyChainNodeBuilder {
 	// VM Creation Process
 	vmSupplyChainNodeBuilder := builder.NewSupplyChainNodeBuilder(proto.EntityDTO_VIRTUAL_MACHINE).
-					Sells(vCpuTemplateComm).
-					Sells(vMemTemplateComm)
+		Sells(vCpuTemplateComm).
+		Sells(vMemTemplateComm)
 
 	// The Entity type for the Virtual Machine's commodity provider is defined by the Provider() method.
-	// The Commodity type for Virtual Machine's buying relationship is define by the Buys() method
+	// The Commodity type for Virtual Machine's buying relationship is defined by the Buys() method
 	vmSupplyChainNodeBuilder = vmSupplyChainNodeBuilder.
 		Provider(proto.EntityDTO_PHYSICAL_MACHINE, proto.Provider_HOSTING).
 		Buys(cpuTemplateComm).

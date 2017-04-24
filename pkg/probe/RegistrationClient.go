@@ -38,26 +38,24 @@ func (registrationClient *ExampleRegistrationClient) GetIdentifyingFields() stri
 }
 
 func (myProbe *ExampleRegistrationClient) GetAccountDefinition() []*proto.AccountDefEntry {
-	var acctDefProps []*proto.AccountDefEntry
-
 	// target id
 	targetIDAcctDefEntry := builder.NewAccountDefEntryBuilder(TargetIdField, "Address",
-		"IP address of the probe", ".*",
+		"IP address of the target", ".*",
 		true, false).Create()
-
-	acctDefProps = append(acctDefProps, targetIDAcctDefEntry)
 
 	// username
 	usernameAcctDefEntry := builder.NewAccountDefEntryBuilder(Username, "Username",
-		"Username of the probe", ".*",
+		"Username for the target", ".*",
 		true, false).Create()
-	acctDefProps = append(acctDefProps, usernameAcctDefEntry)
 
 	// password
 	passwdAcctDefEntry := builder.NewAccountDefEntryBuilder(Password, "Password",
-		"Password of the probe", ".*",
+		"Password for the target", ".*",
 		true, true).Create()
-	acctDefProps = append(acctDefProps, passwdAcctDefEntry)
 
-	return acctDefProps
+	return []*proto.AccountDefEntry{
+		targetIDAcctDefEntry,
+		usernameAcctDefEntry,
+		passwdAcctDefEntry,
+	}
 }
