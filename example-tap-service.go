@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
+	"github.com/golang/glog"
 
 	// Turbo sdk imports
 	"github.com/turbonomic/turbo-go-sdk/pkg/probe"
@@ -21,7 +21,7 @@ func main() {
 
 	communicator, err := service.ParseTurboCommunicationConfig(turboCommConf)
 	if err != nil {
-		fmt.Printf("Error while parsing the turbo communicator config file %v: %v\n", turboCommConf, err)
+		glog.Infof("Error while parsing the turbo communicator config file %v: %v\n", turboCommConf, err)
 		os.Exit(1)
 	}
 
@@ -30,7 +30,7 @@ func main() {
 	// Example Probe Registration Client
 	discoveryClient, err := example.NewDiscoveryClient(targetConf)
 	if err != nil {
-		fmt.Printf("Error while instantiating a discovery client at %v with config %v: %v\n", turboCommConf, targetConf, err)
+		glog.Infof("Error while instantiating a discovery client at %v with config %v: %v\n", turboCommConf, targetConf, err)
 		os.Exit(1)
 	}
 
@@ -41,7 +41,7 @@ func main() {
 			DiscoversTarget(discoveryClient.ClientConf.Address, discoveryClient)).Create()
 
 	if err != nil {
-		fmt.Printf("Error while building turbo tap service on target %v: %v\n", discoveryClient.ClientConf.Address, err)
+		glog.Infof("Error while building turbo tap service on target %v: %v\n", discoveryClient.ClientConf.Address, err)
 		os.Exit(1)
 	}
 

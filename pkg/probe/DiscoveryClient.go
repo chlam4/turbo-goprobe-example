@@ -2,6 +2,7 @@ package probe
 
 import (
 	"fmt"
+	"github.com/golang/glog"
 
 	// Turbo sdk imports
 	"github.com/turbonomic/turbo-go-sdk/pkg/builder"
@@ -22,10 +23,10 @@ type ExampleDiscoveryClient struct {
 func NewDiscoveryClient(confFile string) (*ExampleDiscoveryClient, error) {
 	// Parse conf file to create clientConf
 	clientConf, _ := conf.NewExampleTargetConf(confFile)
-	fmt.Printf("[ExampleDiscoveryClient] Target Conf %v\n", clientConf)
+	glog.Infof("[ExampleDiscoveryClient] Target Conf %v\n", clientConf)
 	topologyAccessor, err := NewTopologyGenerator(2, 3)
 	if err != nil {
-		fmt.Errorf("Error when instantiating a topology generator", err)
+		glog.Errorf("Error when instantiating a topology generator", err)
 		return nil, err
 	}
 	client := &ExampleDiscoveryClient{
@@ -71,17 +72,17 @@ func (handler *ExampleDiscoveryClient) GetAccountValues() *probe.TurboTargetInfo
 
 // Validate the Target
 func (handler *ExampleDiscoveryClient) Validate(accountValues []*proto.AccountValue) (*proto.ValidationResponse, error) {
-	fmt.Printf("[ExampleDiscoveryClient] BEGIN Validation for ExampleDiscoveryClient  %s", accountValues)
+	glog.Infof("[ExampleDiscoveryClient] BEGIN Validation for ExampleDiscoveryClient %s\n", accountValues)
 	// TODO: connect to the client and get validation response
 	validationResponse := &proto.ValidationResponse{}
 
-	fmt.Printf("[ExampleDiscoveryClient] validation response %s\n", validationResponse)
+	glog.Infof("[ExampleDiscoveryClient] validation response %s\n", validationResponse)
 	return validationResponse, nil
 }
 
 // Discover the Target Topology
 func (handler *ExampleDiscoveryClient) Discover(accountValues []*proto.AccountValue) (*proto.DiscoveryResponse, error) {
-	fmt.Printf("[ExampleProbe] ========= Discovery for ExampleProbe ============= %s", accountValues)
+	glog.Infof("[ExampleProbe] ========= Discovery for ExampleProbe ============= %s\n", accountValues)
 	discoveryResults, err := handler.Discover_Old()
 	// 4. Build discovery response.
 	// If there is error during discovery, return an ErrorDTO.
@@ -103,7 +104,7 @@ func (handler *ExampleDiscoveryClient) Discover(accountValues []*proto.AccountVa
 			EntityDTO: discoveryResults,
 		}
 	}
-	fmt.Printf("[ExampleProbe] discovery response %s\n", discoveryResponse)
+	glog.Infof("[ExampleProbe] discovery response %s\n", discoveryResponse)
 	return discoveryResponse, nil
 }
 

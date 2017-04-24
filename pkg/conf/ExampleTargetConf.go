@@ -2,9 +2,9 @@ package conf
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
+	"github.com/golang/glog"
 )
 
 // Configuration Parameters to connect to an example Target
@@ -19,7 +19,7 @@ type ExampleTargetConf struct {
 // Create a new ExampleClientConf from file. Other fields have default values and can be overridden.
 func NewExampleTargetConf(targetConfigFilePath string) (*ExampleTargetConf, error) {
 
-	fmt.Printf("[ExampleTargetConf] Read configuration from %s\n", targetConfigFilePath)
+	glog.Infof("[ExampleTargetConf] Read configuration from %s\n", targetConfigFilePath)
 	metaConfig := readConfig(targetConfigFilePath)
 
 	return metaConfig, nil
@@ -29,18 +29,18 @@ func NewExampleTargetConf(targetConfigFilePath string) (*ExampleTargetConf, erro
 func readConfig(path string) *ExampleTargetConf {
 	file, e := ioutil.ReadFile(path)
 	if e != nil {
-		fmt.Printf("File error: %v\n", e)
+		glog.Infof("File error: %v\n", e)
 		os.Exit(1)
 	}
-	fmt.Println(string(file))
+	glog.Infoln(string(file))
 
 	var config ExampleTargetConf
 	err := json.Unmarshal(file, &config)
 
 	if err != nil {
-		fmt.Errorf("Unmarshall error :%v\n", err)
+		glog.Errorf("Unmarshall error :%v\n", err)
 	}
-	fmt.Printf("Results: %+v\n", config)
+	glog.Infof("Results: %+v\n", config)
 
 	return &config
 }

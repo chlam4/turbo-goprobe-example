@@ -2,11 +2,11 @@ package probe
 
 import (
 	"fmt"
-
 	crand "crypto/rand"
 	"encoding/base64"
 	"math/rand"
 	"sync"
+	"github.com/golang/glog"
 )
 
 const (
@@ -65,7 +65,7 @@ func (this *TopologyGenerator) UpdateResource() error {
 	this.lock.Lock()
 	defer this.lock.Unlock()
 
-	fmt.Printf("Updating resource usage in current topology.")
+	glog.Infoln("Updating resource usage in current topology.")
 
 	// Update PM resource overhead.
 	for _, pm := range this.pmSet {

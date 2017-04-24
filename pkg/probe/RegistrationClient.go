@@ -1,7 +1,7 @@
 package probe
 
 import (
-	"fmt"
+	"github.com/golang/glog"
 
 	// Turbo sdk imports
 	"github.com/turbonomic/turbo-go-sdk/pkg/builder"
@@ -20,16 +20,16 @@ type ExampleRegistrationClient struct {
 }
 
 func (myProbe *ExampleRegistrationClient) GetSupplyChainDefinition() []*proto.TemplateDTO {
-	fmt.Println("[ExampleRegistrationClient] .......... Now use builder to create a supply chain ..........")
+	glog.Infoln("[ExampleRegistrationClient] .......... Now use builder to create a supply chain ..........")
 
 	// 2. Build supply chain.
 	supplyChainFactory := &SupplyChainFactory{}
 	templateDtos, err := supplyChainFactory.CreateSupplyChain()
 	if err != nil {
-		fmt.Println("[ExampleProbe] Error creating Supply chain for the example probe")
+		glog.Infoln("[ExampleProbe] Error creating Supply chain for the example probe")
 		return nil
 	}
-	fmt.Println("[ExampleProbe] Supply chain for the example probe is created.")
+	glog.Infoln("[ExampleProbe] Supply chain for the example probe is created.")
 	return templateDtos
 }
 
