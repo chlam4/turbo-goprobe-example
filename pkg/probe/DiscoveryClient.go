@@ -10,7 +10,7 @@ import (
 	"github.com/turbonomic/turbo-go-sdk/pkg/proto"
 
 	// Example probe
-	"github.com/chlam4/turbo-goprobe-example/pkg/conf"
+	"github.com/turbonomic/turbo-goprobe-example/pkg/conf"
 )
 
 // Discovery Client for the Example Probe

@@ -10,7 +10,7 @@ import (
 	"github.com/turbonomic/turbo-go-sdk/pkg/service"
 
 	// Example probe
-	example "github.com/chlam4/turbo-goprobe-example/pkg/probe"
+	example "github.com/turbonomic/turbo-goprobe-example/pkg/probe"
 )
 
 func main() {
